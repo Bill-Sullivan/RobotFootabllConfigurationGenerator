@@ -26,26 +26,30 @@ void genCode(vector<string> robotType, string toDefine) {
 		}
 		cout << endl << "	#define " << toDefine << endl;
 		cout << "#endif" << endl;
+		return;
 
 }
 
 void main()
 {
-	vector<string> BASIC_DRIVETRAIN = {};
-	vector<string> DUAL_MOTORS = {};
+	// DO NOT RELY ON THESE they are based on a potentally faulty memory VERIFY and remove this comment
+	vector<string> BASIC_DRIVETRAIN = { "9", "16", "35", "40", "42", "44", "56", "68", "74", "75", "81", "85", "88", "K9" };
+	vector<string> DUAL_MOTORS = { "35" };
 	vector<string> LR_TACKLE_PERIPHERALS = {};
-	vector<string> CENTER_PERIPHERALS = {};
-	vector<string> QB_PERIPHERALS = {};
-	vector<string> IR_MAST = {};
-	vector<string> QB_TRACKING = {};
+	vector<string> OMNIWHEEL_DRIVETRAIN = { "7", "12", "82" };
+	vector<string> CENTER_PERIPHERALS = { "42", "68" };
+	vector<string> QB_PERIPHERALS = { "7", "82" };
+	vector<string> IR_MAST = { "12" };
+	vector<string> QB_TRACKING = { "7", "82" };
 	vector<string> KICKER_PERIPHERALS = {};
 	vector<string> RECEIVER_PERIPHERALS = {};
-	vector<string> LED_STRIP = {};
-	vector<string> TACKLE = {};
+	vector<string> LED_STRIP = { "9", "12", "16", "35", "40", "42", "44", "74", "75", "81", "82", "85", "88", "K9" };
+	vector<string> TACKLE = { "12", "16", "35", "40", "85", "88", "K9" };
 
 	genCode(BASIC_DRIVETRAIN, "BASIC_DRIVETRAIN");
 	genCode(DUAL_MOTORS, "DUAL_MOTORS");
 	genCode(LR_TACKLE_PERIPHERALS, "LR_TACKLE_PERIPHERALS");
+	genCode(OMNIWHEEL_DRIVETRAIN, "OMNIWHEEL_DRIVETRAIN  ");
 	genCode(CENTER_PERIPHERALS, "CENTER_PERIPHERALS");
 	genCode(QB_PERIPHERALS, "QB_PERIPHERALS");
 	genCode(IR_MAST, "IR_MAST");
