@@ -6,14 +6,21 @@ using namespace std;
 
 
 void genCode(vector<string> robotType, string toDefine) {
-	if (robotType.empty()) return;
+	/*
+	prints out
+	#if defined(ROBOT_NUMBER_FirstNumber) || ... || defined(ROBOT_NUMBER_LastNumber)
+		#define toDefine
+	#endif
+	*/
+	
+	if (robotType.empty()) return; // if no robots need this property defined do nothing and return
 
 	cout << "#if ";
 
-		for (vector<string>::iterator it = robotType.begin(); it != robotType.end(); it++) { 
-			string robotNumber = *it; 
-			cout << "defined(ROBOT_NUMBER_" << robotNumber << ")";
-			if (it+1 != robotType.end()) cout << " || ";
+		for (vector<string>::iterator it = robotType.begin(); it != robotType.end(); it++) { // starting at the begining of each vector itterate through the whole vector 
+			string robotNumber = *it;	//put the number of the robot into a local vatiable
+			cout << "defined(ROBOT_NUMBER_" << robotNumber << ")";  
+			if (it+1 != robotType.end()) cout << " || "; // if the loop is not on its last iteration print out a || (or)
 			//if (robotNumber != robotType.back()) cout << " || ";
 
 		}
