@@ -2,9 +2,38 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <functional>
 
 using namespace std;
 
+bool compare(string a, string b) {
+	return (a.compare(b) < 0);
+}
+
+void multipleRobotErrorCheck(vector<string> *robotList) {
+	std::sort(robotList->begin(), robotList->end(), compare);
+	string errorMessage = "#error more than one robot number is defined";
+	for (auto it = robotList->begin(); it != robotList->end()-1; it++) {
+		string indentation = "";
+		cout << indentation << "#if defined(ROBOT_NUMBER_" << *it << ")" << endl;
+		indentation += "	";
+		cout << indentation << "#if defined(ROBOT_NUMBER_" << *(it + 1) << ")" << endl;
+		indentation += "	";
+		cout << indentation << errorMessage << endl;
+		indentation.erase(indentation.begin());
+	
+		for (auto it2 = it+2; it2 != robotList->end(); it2++)	{
+			cout << indentation << "#elif defined(ROBOT_NUMBER_" << *it2 << ")" << endl;
+			indentation += "	";
+			cout << indentation << errorMessage << endl;
+			indentation.erase(indentation.begin());
+		}
+		cout << "	" << "#endif" << endl;
+		indentation.erase(indentation.begin());
+		cout << "#endif" << endl;
+	}
+
+}
 
 void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robotList) {
 	/*
@@ -23,7 +52,7 @@ void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robot
 		cout << "defined(ROBOT_NUMBER_" << robotNumber << ")";  
 		if (it+1 != robotNumbers.end()) cout << " || "; // if the loop is not on its last iteration print out a || (or)
 		//if (robotNumber != robotNumbers.back()) cout << " || ";
-		if (find(robotList->begin(), robotList->end(), *it) == robotList->endll()) {
+		if (find(robotList->begin(), robotList->end(), *it) == robotList->end()) {
 			robotList->push_back(*it);
 		}
 	}
@@ -73,6 +102,8 @@ void main()
 	}
 	cout << endl << "	#warning Robot Number Does not Match any known Robot Configuration" << endl;
 	cout << "#endif" << endl;
+
+	multipleRobotErrorCheck(&robotList);
 
 	while (true);
     return;
