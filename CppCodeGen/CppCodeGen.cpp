@@ -35,6 +35,41 @@ void multipleRobotErrorCheck(vector<string> *robotList) {
 
 }
 
+void multipleRobotErrorCheck2(vector<string> *robotList) {
+	std::sort(robotList->begin(), robotList->end(), compare);
+	string errorMessage = "#error more than one robot number is defined";
+	for (auto it = robotList->begin(); it != robotList->end() - 1; it++) {
+		cout << "#if defined(ROBOT_NUMBER_" << *it << ") ";
+		if (it + 2 != robotList->end()) cout << "&& (";
+		for (auto it2 = robotList->begin(); it2 != robotList->end(); it2++) {
+			if (it != it2) {
+				cout << "defined(ROBOT_NUMBER_" << *it2 << ") ";
+				if (it2 + 2 != robotList->end()) cout << "|| ";
+			}
+		}
+		if (it + 2 != robotList->end())  cout << ")";
+		cout << endl << "	" << errorMessage << endl << "#endif" << endl;
+
+	}
+}
+
+void multipleRobotErrorCheck3(vector<string> *robotList) {
+	std::sort(robotList->begin(), robotList->end(), compare);
+	string errorMessage = "#error more than one robot number is defined";
+	for (auto it = robotList->begin(); it != robotList->end(); it++) {
+		cout << "#if defined(ROBOT_NUMBER_" << *it << ") && (";
+		for (auto it2 = robotList->begin(); it2 != robotList->end(); it2++) {
+			if (it != it2) cout << " defined(ROBOT_NUMBER_" << *it2 << ")";
+			if (it2 + 1 != robotList->end() && ((it != it2 +1 ) )) {
+				cout << " || ";
+			}
+		}
+		cout << ")" << endl << "	" << errorMessage << endl;
+		cout << "#endif " << endl;
+	}
+}
+
+
 void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robotList) {
 	/*
 	prints out
@@ -96,6 +131,8 @@ void main()
 
 	cout << "#if " ;
 
+	std::sort(robotList.begin(), robotList.end(), compare);
+
 	for (vector<string>::iterator it = robotList.begin(); it != robotList.end(); it++) {
 		cout << "!defined(ROBOT_NUMBER_" << *it << ")";  
 		if (it + 1 != robotList.end()) cout << " && "; // if the loop is not on its last iteration print out a || (or)
@@ -103,7 +140,9 @@ void main()
 	cout << endl << "	#warning Robot Number Does not Match any known Robot Configuration" << endl;
 	cout << "#endif" << endl;
 
-	multipleRobotErrorCheck(&robotList);
+	cout << endl << endl << endl;
+
+	multipleRobotErrorCheck3(&robotList);
 
 	while (true);
     return;
