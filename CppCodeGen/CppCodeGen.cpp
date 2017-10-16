@@ -4,56 +4,34 @@
 #include <algorithm>
 #include <functional>
 
+
 using namespace std;
 
 bool compare(string a, string b) {
 	return (a.compare(b) < 0);
 }
 
-void multipleRobotErrorCheck(vector<string> *robotList) {
+void genCheckIfRobotNameIsListed(vector<string>* robotList) {
 	std::sort(robotList->begin(), robotList->end(), compare);
-	string errorMessage = "#error more than one robot number is defined";
-	for (auto it = robotList->begin(); it != robotList->end()-1; it++) {
-		string indentation = "";
-		cout << indentation << "#if defined(ROBOT_NUMBER_" << *it << ")" << endl;
-		indentation += "	";
-		cout << indentation << "#if defined(ROBOT_NUMBER_" << *(it + 1) << ")" << endl;
-		indentation += "	";
-		cout << indentation << errorMessage << endl;
-		indentation.erase(indentation.begin());
-	
-		for (auto it2 = it+2; it2 != robotList->end(); it2++)	{
-			cout << indentation << "#elif defined(ROBOT_NUMBER_" << *it2 << ")" << endl;
-			indentation += "	";
-			cout << indentation << errorMessage << endl;
-			indentation.erase(indentation.begin());
-		}
-		cout << "	" << "#endif" << endl;
-		indentation.erase(indentation.begin());
-		cout << "#endif" << endl;
-	}
 
+	cout << "#if ";
+
+	for (vector<string>::iterator it = robotList->begin(); it != robotList->end(); it++) {
+		cout << "!defined(ROBOT_NUMBER_" << *it << ")";
+		if (it + 1 != robotList->end()) cout << " && "; // if the loop is not on its last iteration print out a && (and)
+	}
+	cout << endl << "	#warning Robot Number Does not Match any known Robot Configuration" << endl;
+	cout << "#endif" << endl;
 }
 
-void multipleRobotErrorCheck2(vector<string> *robotList) {
-	std::sort(robotList->begin(), robotList->end(), compare);
-	string errorMessage = "#error more than one robot number is defined";
-	for (auto it = robotList->begin(); it != robotList->end() - 1; it++) {
-		cout << "#if defined(ROBOT_NUMBER_" << *it << ") ";
-		if (it + 2 != robotList->end()) cout << "&& (";
-		for (auto it2 = robotList->begin(); it2 != robotList->end(); it2++) {
-			if (it != it2) {
-				cout << "defined(ROBOT_NUMBER_" << *it2 << ") ";
-				if (it2 + 2 != robotList->end()) cout << "|| ";
-			}
-		}
-		if (it + 2 != robotList->end())  cout << ")";
-		cout << endl << "	" << errorMessage << endl << "#endif" << endl;
+void genMultipleRobotErrorCheck(vector<string> *robotList) {
+	/*
+	takes a pointer to a list of strings
 
-	}
-}
+	prints out C/C++ Preprocessor statments that throw and error when more than
+	one string in that list is defined
+	*/
 
-void multipleRobotErrorCheck3(vector<string> *robotList) {
 	std::sort(robotList->begin(), robotList->end(), compare);
 	string errorMessage = "#error more than one robot number is defined";
 	for (auto it = robotList->begin(); it != robotList->end(); it++) {
@@ -70,11 +48,11 @@ void multipleRobotErrorCheck3(vector<string> *robotList) {
 }
 
 
-void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robotList) {
+void genCode(vector<string> robotNumbers, string YourDefineHere, vector<string> *robotList) {
 	/*
 	prints out
 	#if defined(ROBOT_NUMBER_FirstNumber) || ... || defined(ROBOT_NUMBER_LastNumber)
-		#define toDefine
+		#define YourDefineHere
 	#endif
 	*/
 	
@@ -91,7 +69,7 @@ void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robot
 			robotList->push_back(*it);
 		}
 	}
-	cout << endl << "	#define " << toDefine << endl;
+	cout << endl << "	#define " << YourDefineHere << endl;
 	cout << "#endif" << endl;	
 	return;
 
@@ -99,19 +77,21 @@ void genCode(vector<string> robotNumbers, string toDefine, vector<string> *robot
 
 void main()
 {
-	// DO NOT RELY ON THESE they are based on a potentally faulty memory VERIFY and remove this comment
-	vector<string> BASIC_DRIVETRAIN = { "9",  "35", "40", "42", "44", "56", "68", "74", "75", "81", "85", "88", "K9" };
-	vector<string> DUAL_MOTORS = { "35" };
+	// DO NOT RELY ON THESE they are based on a potentally faulty human memory VERIFY and remove this comment
+	vector<string> BASIC_DRIVETRAIN = {"3", "9",  "35", "40", "42", "44", "56", "74", "75", "81", "85", "88", "K9" };
+	vector<string> DUAL_MOTORS = {};
 	vector<string> LR_TACKLE_PERIPHERALS = {};
 	vector<string> OMNIWHEEL_DRIVETRAIN = { "7", "12", "16", "82" };
-	vector<string> CENTER_PERIPHERALS = { "42", "68" };
+	vector<string> CENTER_PERIPHERALS = { "42" };
 	vector<string> QB_PERIPHERALS = { "7", "82" };
-	vector<string> IR_MAST = { "12" };
+	vector<string> IR_MAST = { "86" };
 	vector<string> QB_TRACKING = { "7", "82" };
-	vector<string> KICKER_PERIPHERALS = {};
-	vector<string> RECEIVER_PERIPHERALS = {};
+	vector<string> KICKER_PERIPHERALS = {"3"};
+	vector<string> RECEIVER_PERIPHERALS = {"86"};
 	vector<string> LED_STRIP = { "7", "9", "12", "16", "35", "40", "42", "44", "56", "74", "75", "81", "82", "85", "88", "K9" };
 	vector<string> TACKLE = { "7", "12", "16", "35", "40", "56", "82", "85", "88", "K9" };
+	vector<string> NEW_CENTER_PERIPHERALS = { "68" };
+	vector<string> NEW_KICKER_PERIPHERALS = { "6" };
 
 	vector<string> robotList;
 
@@ -128,21 +108,15 @@ void main()
 	genCode(RECEIVER_PERIPHERALS, "RECEIVER_PERIPHERALS", &robotList);
 	genCode(LED_STRIP, "LED_STRIP", &robotList);
 	genCode(TACKLE, "TACKLE", &robotList);
+	genCode(NEW_CENTER_PERIPHERALS, "NEW_CENTER_PERIPHERALS", &robotList);
+	genCode(NEW_KICKER_PERIPHERALS, "NEW_KICKER_PERIPHERALS", &robotList);
 
-	cout << "#if " ;
-
-	std::sort(robotList.begin(), robotList.end(), compare);
-
-	for (vector<string>::iterator it = robotList.begin(); it != robotList.end(); it++) {
-		cout << "!defined(ROBOT_NUMBER_" << *it << ")";  
-		if (it + 1 != robotList.end()) cout << " && "; // if the loop is not on its last iteration print out a || (or)
-	}
-	cout << endl << "	#warning Robot Number Does not Match any known Robot Configuration" << endl;
-	cout << "#endif" << endl;
+	genCheckIfRobotNameIsListed(&robotList);
 
 	cout << endl << endl << endl;
 
-	multipleRobotErrorCheck3(&robotList);
+	genMultipleRobotErrorCheck(&robotList);
+
 
 	while (true);
     return;
