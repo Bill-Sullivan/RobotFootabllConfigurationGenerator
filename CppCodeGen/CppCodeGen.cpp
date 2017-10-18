@@ -64,7 +64,6 @@ void genCode(vector<string> robotNumbers, string YourDefineHere, vector<string> 
 		string robotNumber = *it;	//put the number of the robot into a local vatiable
 		cout << "defined(ROBOT_NUMBER_" << robotNumber << ")";  
 		if (it+1 != robotNumbers.end()) cout << " || "; // if the loop is not on its last iteration print out a || (or)
-		//if (robotNumber != robotNumbers.back()) cout << " || ";
 		if (find(robotList->begin(), robotList->end(), *it) == robotList->end()) {
 			robotList->push_back(*it);
 		}
